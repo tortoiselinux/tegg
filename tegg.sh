@@ -19,13 +19,22 @@
 #   MIT
 #
 #CHANGELOG:
-#   VERSÃO 0.0.1 - beta
+#   VERSÃO 0.0.1 - BETA
 #
 #   Descrição:
 #       versão inicial
 #   alterações:
 #       - criado funções básicas (instalar, remover, atualizar - ainda não funcional, configurar)
 #       - criado função de template
+#
+#   VERSÃO 0.0.2 - BETA
+#   
+#   Descrição:
+#       problema de arquivo e diretórios vindo vazios resolvidos
+#       
+#   alterações
+#       - erros no código corrigidos
+#       - curl substituído por wget
 
 # VARIAVEIS GLOBAIS
 
@@ -47,11 +56,11 @@ comandos:
     OBS: (-) ou (--) antes dos comandos é opcional
 "
 
-arquivo="$2"
+programa="$2"
 
-url="https://raw.githubusercontent.com/tortoiselinux/scripts/main/src/givePerms/$arquivo"
+url="https://raw.githubusercontent.com/tortoiselinux/scripts/main/src/$programa/$programa.sh"
 
-diretorio_destino="$HOME/scripts/teste"
+diretorio_destino="$HOME/scripts/$programa"
 
 
 case "$1" in
@@ -68,6 +77,7 @@ case "$1" in
             printf '%s\n' "diretório $script_dir existente."
         else
             printf '%s\n' "diretório não existente"
+
             exit 1
         fi
 
@@ -75,15 +85,16 @@ case "$1" in
 
         if [ ! -d "$diretorio_destino"  ]; then
             mkdir -p "$diretorio_destino"
+
         fi
         
-        curl -o "$diretorio_destino/$arquivo" "$url"
-        
+        wget -N -P "$diretorio_destino" "$url"
+
         ;;
 
     r | -r | remove | --remove)
         printf '%s\n' "removendo programas"
-        rm -v "$diretorio_destino/$arquivo"
+        rm -v "$diretorio_destino/$arquivo.sh"
     ;;
 
     up | -up | update | --update)
