@@ -1,1 +1,44 @@
+CHANGELOG:
+   VERSÃO 0.0.1 - BETA
 
+   Descrição:
+       versão inicial
+   Alterações:
+       - criado funções básicas (instalar, remover, atualizar - ainda não funcional, configurar)
+       - criado função de template
+
+   VERSÃO 0.0.2 - BETA
+
+   Descrição:
+       problema de arquivo e diretórios vindo vazios resolvidos
+
+   Alterações:
+       - erros no código corrigidos
+       - curl substituído por wget
+
+   VERSÃO 0.0.3 - BETA
+
+   Descrição:
+       - essa versão automatiza a geração da estrutura de diretórios necessária.
+
+   Alterações:
+       - caminhos para programas corrigido
+       - verificação de diretórios no momento da instalação
+       - geração automatizada de diretórios essenciais.
+       - caminho do fonte para opção config corrigido.
+       - remoção de programas corrigida
+       - geração automática de links simbólicos
+       - remoção de links simbólicos adicionada a opção remove
+
+
+   VERSÃO 0.0.4 - BETA
+
+   Descrição:
+   - essa versão trouxe várias correções além no código fonte além das funcionalidades
+   a partir desse momento estarem em sua maioria funcionando como esperado, risos.
+
+   Alterações:
+       - melhor encapsulamento do código
+       - opção template corrigida
+       - opção config agora mais dinâmica
+       - verificação do path corrigida
