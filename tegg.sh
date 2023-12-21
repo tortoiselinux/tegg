@@ -42,7 +42,7 @@ comandos:
     h | help
     i | install
     r | remove
-    u | update
+    up | update
     c | config
     t | template
 
