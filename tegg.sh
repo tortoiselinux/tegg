@@ -1,21 +1,29 @@
 #!/usr/bin/env bash
-#========================{CABEÇALHO}=======================|                                                    #
+#========================{CABEÇALHO}=======================|
+#
 #AUTOR:
-#   wellyton 'welly' <welly.tohn@gmail.com>             #
-#NOME: tegg.sh
+#   wellyton 'welly' <welly.tohn@gmail.com>
+#
+#NOME: tegg
+#
+#VERSÃO: v0.0.4
 #
 #
-#DESCRIÇÃO:                                             #   esse é o gerenciador e instalador de programas e scripts
+#DESCRIÇÃO:
+#   esse é o gerenciador e instalador de programas e scripts
 #   tegg! O dever desse programa é baixar e atualizar cada um
 #   dos scripts necessários e suas dependências.
 #   Além disso, ele dá suporte aos desenvolvedores, gerando
 #   templates para que crie os seus próprios no padrão do projeto
-#   tortoise!                                           #
-#LICENÇA:                                               #   MIT
+#   tortoise!
+#
+#LICENÇA:
+#   MIT
 #
 #CHANGELOG:
 #   VERSÃO 0.0.1 - BETA
-#                                                       #   Descrição:
+#
+#   Descrição:
 #       versão inicial
 #   Alterações:
 #       - criado funções básicas (instalar, remover, atualizar - ainda não funcional, configurar)
@@ -44,6 +52,18 @@
 #       - geração automática de links simbólicos
 #       - remoção de links simbólicos adicionada a opção remove
 #
+#
+#   VERSÃO 0.0.4 - BETA
+#
+#   Descrição:
+#   - essa versão trouxe várias correções além no código fonte além das funcionalidades
+#   a partir desse momento estarem em sua maioria funcionando como esperado, risos.
+#
+#   Alterações:
+#       - melhor encapsulamento do código
+#       - opção template corrigida
+#       - opção config agora mais dinâmica
+#       - verificação do path corrigida
 
 # VARIAVEIS GLOBAIS
 
@@ -54,7 +74,7 @@ comandos:
     h | help
     i | install
     r | remove
-    up| update
+    u | update
     c | config
     t | template
 
@@ -64,165 +84,228 @@ comandos:
 script_dir="$HOME/scripts"
 src_dir="$HOME/scripts/src"
 links_dir="$HOME/scripts/symlinks"
-
-
 programa="$2"
-
+diretorio_destino="$HOME/scripts/src/$programa"
 url="https://raw.githubusercontent.com/tortoiselinux/scripts/main/src/$programa/$programa.sh"
 
-diretorio_destino="$HOME/scripts/src/$programa"
+# FUNÇÕES
+VERIFICA_DIR(){
+
+	printf '%s\n' "verificando estruturas de pastas...."
+
+	printf '%s\n' "verificando se o diretório scripts existe..."
+
+    if [ ! -d "$script_dir"  ]; then
+
+        printf '%s\n' "diretório não existente"
+
+        printf '%s\n' "criando diretorio."
+
+        mkdir -p "$script_dir"
+
+    else
+
+        printf '%s\n' "diretório $script_dir existente."
+
+    fi
+
+    printf '%s\n' "verificando se o diretório scripts existe."
+
+    if [ ! -d "$src_dir"  ]; then
+
+        printf '%s\n' "diretorio não existe"
+
+        printf '%s\n' "criando diretorio $src_dir"
+
+        mkdir -p "$src_dir"
+
+    else
+
+        printf '%s\n' "diretorio $src_dir existe"
+
+    fi
+
+    printf '%s\n' "verificando se o diretório symlinks existe"
+
+    if [ ! -d "$links_dir"  ]; then
+
+        printf '%s\n' "gerando diretorio $links_dir"
+
+        mkdir -p "$links_dir"
+
+     else
+
+        printf '%s\n' "$links_dir existe."
+
+     fi
+}
+
+VERIFICA_PATH(){
+
+	printf '%s\n' "verificando se os programas estão carregados no path..."
+
+	if grep -Fxq 'export "PATH=\$PATH:$HOME/scripts/symlinks"' "$HOME/.bashrc"; then
+
+		printf '%s\n' "Programas já carregados no path."
+
+	else
+
+		echo 'export "PATH=\$PATH:$HOME/scripts/symlinks"' >> "$HOME/.bashrc"
+
+		printf '%s\n' "Linha adicionada ao .bashrc"
+
+	fi
+}
+
+VERIFICA_DESTINO(){
+
+	 if [ ! -d "$diretorio_destino"  ]; then
+	    printf '%s\n' "gerando diretorio de destino"
+
+	    mkdir -p "$diretorio_destino"
+
+	 else
+
+	    printf '%s\n' "$diretorio_destino existe."
+
+	 fi
+}
+
+# FUNCÕES DAS OPÇÕES
+
+INSTALL(){
+
+	printf '%s\n' "iniciando instalação do programa..."
+
+	VERIFICA_DIR
+
+	VERIFICA_DESTINO
+
+    printf '%s\n' "baixando código fonte..."
+
+    wget -N -P "$diretorio_destino" "$url"
+
+    printf '%s\n' "concedendo permissão de execução ao programa"
+
+    chmod +x "$diretorio_destino/$programa.sh"
+
+    printf '%s\n' "gerando link simbólico"
+
+    ln -s "$diretorio_destino/$programa.sh" "$links_dir/$programa"
+}
+
+REMOVE(){
+
+	printf '%s\n' "removendo programas"
+
+	rm -vrf "$diretorio_destino"
+
+    printf '%s\n' "removendo links simbólicos"
+
+    rm -v "$links_dir/$programa"
+
+}
+
+UPDATE(){
+	url="https://raw.githubusercontent.com/tortoiselinux/tegg/main/tegg.sh"
+	diretorio_destino="$HOME/scripts/src/tegg"
+	VERIFICA_DESTINO
+	printf '%s\n' "baixando fonte..."
+	wget -N -P "$diretorio_destino" "$url"
+
+}
+
+CONFIG(){
+	case "$2" in
+	    "")
+
+		VERIFICA_DIR
+
+		VERIFICA_PATH
+	    ;;
+
+	    d | -d | dir | --dir)
+
+		VERIFICA_DIR
+	    ;;
+
+	    p | -p | path | --path)
+
+		VERIFICA_PATH
+	    ;;
+
+	    f | -f | font | --font)
+
+		nano -m -l "$links_dir/tegg"
+	    ;;
+	esac
+}
+
+TEMPLATE(){
+
+    printf '%s\n' "gerando diretório principal do programa"
+
+    mkdir "$src_dir/$programa"
+
+    printf '%s\n' "criando modelo..."
+
+    mkfile -s "$diretorio_destino/$programa.sh"
+
+    givePerms "$diretorio_destino/$programa.sh"
+
+    printf '%s\n' "gerando changelogs..."
+
+    mkfile -e "$diretorio_destino/CHANGELOG.txt"
+
+    printf '%s\n' "gerando symlinks para o script..."
+
+    ln -s "$diretorio_destino/$programa.sh" "$links_dir/$programa"
+}
+
+# INICIO
 
 case "$1" in
+
     "" | h |-h | help | --help)
+
         printf '%s\n' "$uso"
+
     ;;
 
     i | -i | install | --install)
-        printf '%s\n' "iniciando instalação do programa..."
 
-        printf '%s\n' "verificando se o diretório scripts existe..."
+	INSTALL
 
-        if [ ! -d "$script_dir"  ]; then
-
-            printf '%s\n' "diretório não existente"
-            printf '%s\n' "criando diretorio."
-            mkdir -p "$script_dir"
-
-        else
-
-            printf '%s\n' "diretório $script_dir existente."
-
-        fi
-
-        printf '%s\n' "verificando se o diretório scripts existe."
-
-        if [ ! -d "$src_dir"  ]; then
-
-            printf '%s\n' "diretorio não existe"
-            printf '%s\n' "criando diretorio $src_dir"
-            mkdir -p "$src_dir"
-
-        else
-
-           printf '%s\n' "diretorio $src_dir existe"
-
-        fi
-
-        printf '%s\n' "verificando se o diretório symlinks existe"
-
-        if [ ! -d "$links_dir"  ]; then
-
-            printf '%s\n' "gerando diretorio $links_dir"
-            mkdir -p "$links_dir"
-
-        else
-
-            printf '%s\n' "$links_dir existe."
-
-        fi
-
-        if [ ! -d "$diretorio_destino"  ]; then
-
-            printf '%s\n' "gerando diretorio de destino"
-            mkdir -p "$diretorio_destino"
-
-        else
-
-            printf '%s\n' "$diretorio_destino existe."
-
-        fi
-
-        printf '%s\n' "baixando código fonte..."
-
-        wget -N -P "$diretorio_destino" "$url"
-
-        printf '%s\n' "concedendo permissão de execução ao programa"
-
-        chmod +x "$diretorio_destino/$programa.sh"
-
-        printf '%s\n' "gerando link simbólico"
-
-        ln -s "$diretorio_destino/$programa.sh" "$links_dir/$programa"
     ;;
 
     r | -r | remove | --remove)
 
-        printf '%s\n' "removendo programas"
-        rm -vrf "$diretorio_destino"
-
-        printf '%s\n' "removendo links simbólicos"
-        rm -v "$links_dir/$programa"
+	REMOVE
 
     ;;
 
     up | -up | update | --update)
 
-        printf "copiando código fonte..."
+	UPDATE
 
     ;;
 
     c | -c | config | --config)
 
-        nano -m "$src_dir/tegg/tegg"
+	CONFIG
 
     ;;
 
     t | -t | template | --template)
 
+	TEMPLATE
 
-        printf '%s\n' "verificando se o diretório scripts existe..."
-
-        if [ -d "$script_dir"  ]; then
-
-            printf '%s\n' "diretório $script_dir existente."
-
-        fi
-
-        printf '%s\n' "verificando estruturas de pastas..."
-
-        if [ -d "$src_dir"  ]; then
-
-            printf '%s\n' "diretório $src_dir existente."
-
-        fi
-
-        if [ -d "$links_dir"  ]; then
-
-            printf '%s\n' "diretório $links_dir existente."
-
-        fi
-
-        printf '%s\n' "verificando se os programas estão carregados no path..."
-
-        if [ grep -q "export PATH=$PATH:/.turtle" "$HOME/.bash_profile"  ]; then
-
-            printf '%s\n' "programas carregados."
-
-        fi
-
-        printf '%s\n' "gerando diretório principal do programa"
-
-        mkdir "$2"
-
-        printf '%s\n' "adentrando no oceano!"
-
-        cd "$HOME/scripts/src/$2"
-
-        printf '%s\n' "criando modelo..."
-
-        mkfile -s "$2".sh
-
-        printf '%s\n' "gerando changelogs..."
-
-        mkfile -e CHANGELOG.TXT
-
-        printf '%s\n' "gerando symlinks para o script..."
-
-        ln "$HOME/scripts/src/$2" -t "$HOME/scripts/symlinks"
     ;;
 
     *)
         printf "opção inválida digite (-h) para mais informações"
+
         exit 1
     ;;
+
 esac
