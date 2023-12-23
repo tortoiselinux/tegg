@@ -6,7 +6,7 @@
 #
 #NOME: tegg
 #
-#VERSÃO: v0.0.4
+#VERSÃO: v0.0.5
 #
 #
 #DESCRIÇÃO:
@@ -21,17 +21,13 @@
 #   MIT
 #
 #CHANGELOG:
-#   VERSÃO 0.0.4 - BETA
+#   VERSÃO 0.0.5 - BETA
 #
 #   Descrição:
-#   - essa versão trouxe várias correções além no código fonte além das funcionalidades
-#   a partir desse momento estarem em sua maioria funcionando como esperado, risos.
+#   - correção na função que atualiza o instalador.
 #
 #   Alterações:
-#       - melhor encapsulamento do código
-#       - opção template corrigida
-#       - opção config agora mais dinâmica
-#       - verificação do path corrigida
+#       - correção da opção update
 
 # VARIAVEIS GLOBAIS
 
@@ -177,10 +173,18 @@ REMOVE(){
 UPDATE(){
 	url="https://raw.githubusercontent.com/tortoiselinux/tegg/main/tegg.sh"
 	diretorio_destino="$HOME/scripts/src/tegg"
+	programa="tegg"
+
 	VERIFICA_DESTINO
+
 	printf '%s\n' "baixando fonte..."
 	wget -N -P "$diretorio_destino" "$url"
 
+	printf '%s\n' "concedendo permissão de execução"
+    chmod +x "$diretorio_destino/$programa.sh"
+
+    printf '%s\n' "criando link simbólico"
+	ln -s "$diretorio_destino/$programa.sh" "$links_dir/$programa"
 }
 
 CONFIG(){
