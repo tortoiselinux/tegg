@@ -42,3 +42,23 @@ CHANGELOG:
        - opção template corrigida
        - opção config agora mais dinâmica
        - verificação do path corrigida
+   
+   VERSÃO 0.0.5 - BETA
+
+   Descrição:
+   - correção na função que atualiza o instalador.
+
+   Alterações:
+       - correção da opção update
+
+   VERSÃO 0.0.6 - BETA
+
+   Descrição:
+   - correção na função de configuração do tegg
+
+   Alterações:
+       - bug da função de configuração corrigido.
+   detalhes:
+       - a função de configuração tinha um erro no recebimento 
+       do argumento o que fazia que obtivesse sempre um argumento
+       vazio.

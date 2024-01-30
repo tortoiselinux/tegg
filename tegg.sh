@@ -6,7 +6,7 @@
 #
 #NOME: tegg
 #
-#VERSÃO: v0.0.5
+#VERSÃO: v0.0.6
 #
 #
 #DESCRIÇÃO:
@@ -21,13 +21,17 @@
 #   MIT
 #
 #CHANGELOG:
-#   VERSÃO 0.0.5 - BETA
+#   VERSÃO 0.0.6 - BETA
 #
 #   Descrição:
-#   - correção na função que atualiza o instalador.
+#   - correção na função de configuração do tegg
 #
 #   Alterações:
-#       - correção da opção update
+#       - bug da função de configuração corrigido.
+#   detalhes:
+#       - a função de configuração tinha um erro no recebimento 
+#       do argumento o que fazia que obtivesse sempre um argumento
+#       vazio.
 
 # VARIAVEIS GLOBAIS
 
@@ -188,28 +192,32 @@ UPDATE(){
 }
 
 CONFIG(){
-	case "$2" in
+	case "$1" in
 	    "")
 
-		VERIFICA_DIR
+		  VERIFICA_DIR
 
-		VERIFICA_PATH
+		  VERIFICA_PATH
 	    ;;
 
 	    d | -d | dir | --dir)
 
-		VERIFICA_DIR
+		  VERIFICA_DIR
 	    ;;
 
 	    p | -p | path | --path)
 
-		VERIFICA_PATH
+		  VERIFICA_PATH
 	    ;;
 
 	    f | -f | font | --font)
 
-		nano -m -l "$links_dir/tegg"
+		  nano -m -l "$links_dir/tegg"
 	    ;;
+
+        *)
+            printf '%s\n' "não foi possível identificar o argumento."
+        ;;
 	esac
 }
 
@@ -246,31 +254,31 @@ case "$1" in
 
     i | -i | install | --install)
 
-	INSTALL
+	   INSTALL
 
     ;;
 
     r | -r | remove | --remove)
 
-	REMOVE
+	   REMOVE
 
     ;;
 
     up | -up | update | --update)
 
-	UPDATE
+	   UPDATE
 
     ;;
 
     c | -c | config | --config)
 
-	CONFIG
+	   CONFIG "$2"
 
     ;;
 
     t | -t | template | --template)
 
-	TEMPLATE
+	   TEMPLATE
 
     ;;
 
